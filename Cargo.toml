@@ -11,8 +11,9 @@ description = "RealTime-OS Kernel"
 
 
 [dependencies]
-pudding-pac  = { path = "../pac"} 
+#pudding-pac  = { path = "../pac"} 
 #pudding-pac = {version="0.1.2", default-features=false}
+pudding-pac    = { git = "https://github.com/ryuz/pudding-pac.git", branch="work" } 
 bitflags = "2.2.1"
 num = {version="0.4", default-features=false}
 
