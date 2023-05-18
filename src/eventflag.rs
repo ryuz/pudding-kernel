@@ -1,14 +1,11 @@
 use crate::system::*;
 use crate::*;
 
-
-
 #[derive(Clone, Copy)]
 pub enum WaitFlagMode {
     AndWait,
     OrWait,
 }
-
 
 // EventFlag control block
 pub struct Eventflag {
@@ -17,7 +14,6 @@ pub struct Eventflag {
     wait_ptn: FlagPattern,
     wait_mode: WaitFlagMode,
 }
-
 
 impl Eventflag {
     pub const fn new(init_pattern: FlagPattern) -> Self {
@@ -31,8 +27,8 @@ impl Eventflag {
 
     fn is_match_pattern(&self) -> bool {
         match self.wait_mode {
-            WaitFlagMode::AndWait => { (self.flg_ptn & self.wait_ptn) == self.wait_ptn },
-            WaitFlagMode::OrWait => { (self.flg_ptn & self.wait_ptn) != 0 },
+            WaitFlagMode::AndWait => (self.flg_ptn & self.wait_ptn) == self.wait_ptn,
+            WaitFlagMode::OrWait => (self.flg_ptn & self.wait_ptn) != 0,
         }
     }
 
@@ -41,7 +37,7 @@ impl Eventflag {
         self.flg_ptn |= pattern;
         let front = self.queue.front();
         match front {
-            None => {},
+            None => {}
             Some(task) => {
                 if self.is_match_pattern() {
                     task.detach_from_queue();
@@ -60,7 +56,7 @@ impl Eventflag {
 
     pub fn wait(&mut self, wait_pattern: FlagPattern, wait_mode: WaitFlagMode) {
         let _sc = SystemCall::new();
-        assert!(self.queue.is_empty());   // TA_WSGL のみ
+        assert!(self.queue.is_empty()); // TA_WSGL のみ
 
         self.wait_ptn = wait_pattern;
         self.wait_mode = wait_mode;
@@ -71,30 +67,38 @@ impl Eventflag {
         }
     }
 
-    
-    pub fn polling(&mut self, wait_pattern: FlagPattern, wait_mode: WaitFlagMode) -> Result<(), Error>
-    {
+    pub fn polling(
+        &mut self,
+        wait_pattern: FlagPattern,
+        wait_mode: WaitFlagMode,
+    ) -> Result<(), Error> {
         let _sc = SystemCall::new();
-        assert!(self.queue.is_empty());   // TA_WSGL のみ
+        assert!(self.queue.is_empty()); // TA_WSGL のみ
         self.wait_ptn = wait_pattern;
         self.wait_mode = wait_mode;
-        if self.is_match_pattern() {Ok(())} else {Err(Error::Timeout)}
-
+        if self.is_match_pattern() {
+            Ok(())
+        } else {
+            Err(Error::Timeout)
+        }
     }
 
-    pub fn wait_with_timeout(&mut self, wait_pattern: FlagPattern, wait_mode: WaitFlagMode, time: RelativeTime) -> Result<(), Error>
-    {
+    pub fn wait_with_timeout(
+        &mut self,
+        wait_pattern: FlagPattern,
+        wait_mode: WaitFlagMode,
+        time: RelativeTime,
+    ) -> Result<(), Error> {
         let task = current_task().unwrap();
         {
             let _sc = SystemCall::new();
-            assert!(self.queue.is_empty());   // TA_WSGL のみ
+            assert!(self.queue.is_empty()); // TA_WSGL のみ
 
             self.wait_ptn = wait_pattern;
             self.wait_mode = wait_mode;
             if self.is_match_pattern() {
                 task.set_result(Ok(()));
-            }
-            else {
+            } else {
                 task.detach_from_queue();
                 task.attach_to_queue(&mut self.queue, Order::Fifo);
                 task.attach_to_timeout(time);
@@ -102,6 +106,5 @@ impl Eventflag {
             }
         }
         task.result()
-    }    
+    }
 }
-

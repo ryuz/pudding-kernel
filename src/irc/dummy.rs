@@ -8,4 +8,4 @@ pub fn interrupt_disable(_intno: IntNo) {}
 pub unsafe fn interrupt_set_handler(_intno: IntNo, _handler: Option<fn()>) {}
 
 // 割込みコントローラの割込み処理
-pub(in crate) unsafe fn interrupt_handler(_inhno: isize) {}
+pub(crate) unsafe fn interrupt_handler(_inhno: isize) {}
