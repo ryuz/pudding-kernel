@@ -5,18 +5,6 @@ use std::{env, error::Error}; // , path::PathBuf};
 fn main() -> Result<(), Box<dyn Error>> {
     let target = env::var("TARGET").unwrap();
 
-    /*
-    {
-        use std::fs::File;
-        use std::io::Write;
-        let mut file = File::create("env_list_.txt")?;
-        for (key, value) in env::vars() {
-            write!(file, "{}: {}\n", key, value)?;
-        }
-        file.flush()?;
-    }
-    */
-
     if target.contains("armv7r") {
         // ソースファイル
         let src_files = vec![

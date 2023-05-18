@@ -1,5 +1,5 @@
-use crate::*;
 use crate::task::*;
+use crate::*;
 
 struct SystemControlBlock {
     interrupt: bool,

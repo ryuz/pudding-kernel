@@ -44,7 +44,7 @@ pub unsafe fn interrupt_set_handler(intno: usize, handler: Option<fn()>) {
 }
 
 // 割込みコントローラの割込み処理
-pub(in crate) unsafe fn interrupt_handler(_: isize) {
+pub(crate) unsafe fn interrupt_handler(_: isize) {
     // 割込み番号取得
     let icciar = PL390.read_icciar();
     let intno = icciar as usize;

@@ -53,8 +53,7 @@ impl Semaphore {
         }
     }
 
-    pub fn wait_with_timeout(&mut self, time: RelativeTime) -> Result<(), Error>
-    {
+    pub fn wait_with_timeout(&mut self, time: RelativeTime) -> Result<(), Error> {
         let task = current_task().unwrap();
         {
             let _sc = SystemCall::new();
